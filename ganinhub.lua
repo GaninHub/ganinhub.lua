@@ -1,32 +1,29 @@
 -- ============================================================================
--- GANIN HUB 👾 | SISTEMA UNIFICADO: CINEMATIC INTRO + BLACKOUT EDITION
+-- GANIN HUB 👾 | SCRIPT COMPLETO E CORRIGIDO
 -- ============================================================================
 
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 local Players = game:GetService("Players")
+local Camera = workspace.CurrentCamera
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
--- [ CONFIGURAÇÕES DE SEGURANÇA ] --
 local function GetSafeGuiContainer()
     if gethui then return gethui() elseif game:GetService("CoreGui"):FindFirstChild("RobloxGui") then return game:GetService("CoreGui") else return PlayerGui end
 end
 
 local TargetGuiParent = GetSafeGuiContainer()
 
--- [ CORES E CONSTANTES ] --
 local MAIN_COLOR = Color3.fromRGB(170, 0, 255)
-local GLITCH_COLOR = Color3.fromRGB(255, 0, 200)
 local PINK = Color3.fromRGB(255, 70, 200)
 local WHITE = Color3.fromRGB(255, 255, 255)
 local BLACK = Color3.fromRGB(5, 5, 8)
-local INTRO_TIME = 3
 
 -- ============================================================================
--- 1. SISTEMA DE INTRO (CUTE CINEMATIC)
+-- 1. INTRO CINEMÁTICA
 -- ============================================================================
 
 local function StartCinematicIntro(Callback)
@@ -62,7 +59,6 @@ local function StartCinematicIntro(Callback)
     Blur.Size = 0
     Blur.Parent = Lighting
 
-    -- [ FOTO/LOGO MAIS PARA CIMA (Mudado para 0.30) ] --
     local LogoHolder = Instance.new("Frame")
     LogoHolder.AnchorPoint = Vector2.new(0.5, 0.5)
     LogoHolder.Position = UDim2.fromScale(0.5, 0.30)
@@ -96,7 +92,6 @@ local function StartCinematicIntro(Callback)
     LogoImage.Parent = LogoHolder
     Instance.new("UICorner", LogoImage).CornerRadius = UDim.new(1, 0)
 
-    -- [ TÍTULO MANTIDO NA POSIÇÃO ORIGINAL (0.60) ] --
     local Title = Instance.new("TextLabel")
     Title.AnchorPoint = Vector2.new(0.5, 0.5)
     Title.Position = UDim2.fromScale(0.5, 0.60)
@@ -109,7 +104,6 @@ local function StartCinematicIntro(Callback)
     Title.TextTransparency = 1
     Title.Parent = Background
 
-    -- [ SUBTÍTULO MANTIDO NA POSIÇÃO ORIGINAL (0.665) ] --
     local Sub = Instance.new("TextLabel")
     Sub.AnchorPoint = Vector2.new(0.5, 0.5)
     Sub.Position = UDim2.fromScale(0.5, 0.665)
@@ -122,7 +116,6 @@ local function StartCinematicIntro(Callback)
     Sub.TextTransparency = 1
     Sub.Parent = Background
 
-    -- [ BARRA DE PROGRESSO MANTIDA NA POSIÇÃO ORIGINAL (0.75) ] --
     local BarBG = Instance.new("Frame")
     BarBG.AnchorPoint = Vector2.new(0.5, 0.5)
     BarBG.Position = UDim2.fromScale(0.5, 0.75)
@@ -137,7 +130,6 @@ local function StartCinematicIntro(Callback)
     Bar.Parent = BarBG
     Instance.new("UICorner", Bar).CornerRadius = UDim.new(1, 0)
 
-    -- [ PORCENTAGEM MANTIDA NA POSIÇÃO ORIGINAL (0.80) ] --
     local Percent = Instance.new("TextLabel")
     Percent.AnchorPoint = Vector2.new(0.5, 0.5)
     Percent.Position = UDim2.fromScale(0.5, 0.80)
@@ -150,7 +142,6 @@ local function StartCinematicIntro(Callback)
     Percent.TextTransparency = 1
     Percent.Parent = Background
 
-    -- Partículas
     for i = 1, 35 do
         local Particle = Instance.new("Frame")
         local size = math.random(3, 8)
@@ -174,7 +165,6 @@ local function StartCinematicIntro(Callback)
         end)
     end
 
-    -- Animação
     task.spawn(function()
         Flash.BackgroundTransparency = 0
         TweenService:Create(Flash, TweenInfo.new(0.7), {BackgroundTransparency = 1}):Play()
@@ -191,10 +181,6 @@ local function StartCinematicIntro(Callback)
         for i = 0, 100 do
             Percent.Text = i .. "%"
             Bar.Size = UDim2.fromScale(i / 100, 1)
-            if i == 20 then Sub.Text = "✦ LOADING SYSTEM... ✦"
-            elseif i == 50 then Sub.Text = "✦ LOADING INTERFACE... ✦"
-            elseif i == 75 then Sub.Text = "✦ ALMOST READY... ✦"
-            elseif i == 100 then Sub.Text = "✦ READY! ✦" end
             task.wait(0.025)
         end
 
@@ -216,30 +202,30 @@ local function StartCinematicIntro(Callback)
 end
 
 -- ============================================================================
--- 2. SISTEMA DO PAINEL (HUB DEFINITIVO)
+-- 2. PAINEL PRINCIPAL
 -- ============================================================================
 
 local function IniciarHub()
+    pcall(function()
+        Lighting.GlobalShadows = false
+        Lighting.FogEnd = 9e9
+    end)
+
     local success, Fluent = pcall(function()
         return loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
     end)
 
-    if not success or not Fluent then
-        warn("Erro ao carregar Fluent Library!")
-        return
-    end
+    if not success or not Fluent then return end
 
     local Window = Fluent:CreateWindow({
         Title = "Ganin hub 👾",
-        SubTitle = "Blackout Premium V11.9",
+        SubTitle = "Blackout V11.9",
         TabWidth = 140,
         Size = UDim2.fromOffset(500, 380),
-        Acrylic = false, 
         Theme = "Dark", 
         MinimizeKey = Enum.KeyCode.G 
     })
 
-    -- [ BOTÃO DE MINIMIZAR (AVATAR) ] --
     local MainGui = Instance.new("ScreenGui", TargetGuiParent)
     local MainBtn = Instance.new("ImageButton", MainGui)
     MainBtn.Size = UDim2.new(0, 60, 0, 60)
@@ -248,17 +234,16 @@ local function IniciarHub()
     MainBtn.Image = "rbxassetid://111763894098712" 
     MainBtn.Draggable = true
     Instance.new("UICorner", MainBtn).CornerRadius = UDim.new(1, 0)
-    Instance.new("UIStroke", MainBtn).Color = Color3.fromRGB(170, 0, 255)
+    Instance.new("UIStroke", MainBtn).Color = MAIN_COLOR
     MainBtn.MouseButton1Click:Connect(function() Window:Minimize() end)
 
-    -- [ CONFIGURAÇÕES DO SISTEMA ] --
-    local Flying = false
-    local FlySpeed = 50
+    local Flying, FlySpeed = false, 50
     local FlyControl = {f = 0, b = 0, l = 0, r = 0, q = 0, e = 0}
-    local ESP_Settings = { Enabled = false, Names = false, Aura = false, Tracers = false, MainColor = Color3.fromRGB(170, 0, 255) }
+    local ESP_Settings = { Enabled = false, Boxes = false, Names = false, Health = false, Tracers = false, MainColor = MAIN_COLOR }
     local TrollSettings = { KillAura = false, AuraRange = 25, TargetMode = "Mais Próximo", AutoEquipTool = true, TPToTarget = false }
-    local SelectedAuraTarget = nil
+    local SelectedTPTarget, SelectedAuraTarget = nil, nil
 
+    -- Criação das Abas
     local Tabs = {
         Discord = Window:AddTab({ Title = "Discord", Icon = "message-circle" }),
         Credits = Window:AddTab({ Title = "Credits", Icon = "heart" }),
@@ -266,30 +251,29 @@ local function IniciarHub()
         ESP = Window:AddTab({ Title = "ESP", Icon = "eye" }),
         Troll = Window:AddTab({ Title = "Troll", Icon = "flame" }),
         Protection = Window:AddTab({ Title = "Protection", Icon = "shield-check" }),
-        Server = Window:AddTab({ Title = "Server Info", Icon = "activity" }),
-        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+        Server = Window:AddTab({ Title = "Server Info", Icon = "activity" })
     }
 
-    -- [ CONTEÚDO DAS ABAS ] --
+    -- 1. Discord
     Tabs.Discord:AddParagraph({Title = "Ganin hub 👾", Content = "Admin: @Drakzin\nAdmin: @Darkznx"})
     Tabs.Discord:AddButton({Title = "Copiar Convite", Callback = function() pcall(function() setclipboard("https://discord.gg/W5Ep6bzxq") end) end})
-    Tabs.Credits:AddParagraph({Title = "👑 Credits", Content = "Script Created by: Drakzin & Darkznx\nBlackout Edition V11.9"})
 
-    -- TAB MAIN
-    Tabs.Main:AddSlider("WalkSpeed", {Title = "WalkSpeed", Default = 16, Min = 16, Max = 500, Rounding = 0, Callback = function(v) if Player.Character then Player.Character.Humanoid.WalkSpeed = v end end})
-    Tabs.Main:AddSlider("JumpPower", {Title = "JumpPower", Default = 50, Min = 50, Max = 500, Rounding = 0, Callback = function(v) if Player.Character then Player.Character.Humanoid.JumpPower = v end end})
-    Tabs.Main:AddSlider("Gravity", {Title = "Gravity", Default = 196, Min = 0, Max = 500, Rounding = 0, Callback = function(v) workspace.Gravity = v end})
-    Tabs.Main:AddToggle("InfJump", {Title = "Infinite Jump", Default = false, Callback = function(v) _G.InfJump = v end})
+    -- 2. Credits
+    Tabs.Credits:AddParagraph({Title = "👑 Credits", Content = "Created by: Drakzin \u0026 Darkznx"})
+
+    -- 3. Main
+    Tabs.Main:AddSlider("WalkSpeed", {Title = "WalkSpeed", Default = 16, Min = 16, Max = 500, Callback = function(v) if Player.Character then Player.Character.Humanoid.WalkSpeed = v end end})
+    Tabs.Main:AddSlider("JumpPower", {Title = "JumpPower", Default = 50, Min = 50, Max = 500, Callback = function(v) if Player.Character then Player.Character.Humanoid.JumpPower = v end end})
+    Tabs.Main:AddSlider("Gravity", {Title = "Gravity", Default = 196, Min = 0, Max = 500, Callback = function(v) workspace.Gravity = v end})
+    Tabs.Main:AddToggle("InfJump", {Title = "Infinite Jump", Default = false, Callback = function(v) ESP_Settings.Enabled = v end})
     
-    -- [ FLY & SPECTATE ] --
-    Tabs.Main:AddSection("Fly & Spectate")
-    Tabs.Main:AddSlider("FlySpeed", {Title = "Fly Speed", Default = 50, Min = 10, Max = 300, Rounding = 0, Callback = function(v) FlySpeed = v end})
+    Tabs.Main:AddSection("Fly \u0026 Spectate")
+    Tabs.Main:AddSlider("FlySpeed", {Title = "Fly Speed", Default = 50, Min = 10, Max = 300, Callback = function(v) FlySpeed = v end})
     Tabs.Main:AddToggle("FlyTog", {Title = "Fly", Default = false, Callback = function(v)
         Flying = v 
         local char = Player.Character
         if char then
-            local hum = char:FindFirstChildOfClass("Humanoid")
-            local root = char:FindFirstChild("HumanoidRootPart")
+            local hum, root = char:FindFirstChildOfClass("Humanoid"), char:FindFirstChild("HumanoidRootPart")
             if Flying and hum and root then
                 hum.PlatformStand = true
                 local bg = Instance.new("BodyGyro", root) bg.P = 9e4 bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
@@ -312,31 +296,44 @@ local function IniciarHub()
     end})
     Tabs.Main:AddButton({Title = "Reset View", Callback = function() if Player.Character and Player.Character:FindFirstChild("Humanoid") then workspace.CurrentCamera.CameraSubject = Player.Character.Humanoid end end})
 
-    -- [ ABA ESP ] --
-    Tabs.ESP:AddToggle("EspM", {Title = "Ativar Visão", Default = false, Callback = function(v) ESP_Settings.Enabled = v end})
-    Tabs.ESP:AddToggle("EspA", {Title = "Aura", Default = false, Callback = function(v) ESP_Settings.Aura = v end})
-    Tabs.ESP:AddToggle("EspT", {Title = "Tracers", Default = false, Callback = function(v) ESP_Settings.Tracers = v end})
-    Tabs.ESP:AddColorpicker("EspC", {Title = "Cor", Default = Color3.fromRGB(170, 0, 255), Callback = function(v) ESP_Settings.MainColor = v end})
+    Tabs.Main:AddSection("Teleport System")
+    local TPPlayerDropdown = Tabs.Main:AddDropdown("TPPlayerTarget", {Title = "Teletransportar para Jogador", Values = {}, Callback = function(Name) SelectedTPTarget = Name end})
+    Tabs.Main:AddButton({Title = "Ir até o Jogador", Callback = function()
+        if SelectedTPTarget then
+            local targetPlayer = Players:FindFirstChild(SelectedTPTarget)
+            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+                Player.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
+            end
+        end
+    end})
 
-    -- [ ABA TROLL ] --
+    -- 4. ESP
+    Tabs.ESP:AddToggle("EspM", {Title = "Ativar ESP Geral", Default = false, Callback = function(v) ESP_Settings.Enabled = v end})
+    Tabs.ESP:AddToggle("EspB", {Title = "Box 2D", Default = false, Callback = function(v) ESP_Settings.Boxes = v end})
+    Tabs.ESP:AddToggle("EspN", {Title = "Nomes \u0026 Distância", Default = false, Callback = function(v) ESP_Settings.Names = v end})
+    Tabs.ESP:AddToggle("EspH", {Title = "Barra de Vida", Default = false, Callback = function(v) ESP_Settings.Health = v end})
+    Tabs.ESP:AddToggle("EspT", {Title = "Tracers", Default = false, Callback = function(v) ESP_Settings.Tracers = v end})
+    Tabs.ESP:AddColorpicker("EspC", {Title = "Cor do ESP", Default = MAIN_COLOR, Callback = function(v) ESP_Settings.MainColor = v end})
+
+    -- 5. Troll
     Tabs.Troll:AddSection("Kill Aura (Troll)")
     Tabs.Troll:AddToggle("KillAuraTog", {Title = "Ativar Kill Aura", Default = false, Callback = function(v) TrollSettings.KillAura = v end})
-    Tabs.Troll:AddDropdown("AuraMode", {Title = "Modo de Seleção", Values = {"Mais Próximo", "Todos os Jogadores", "Alvo Específico"}, Default = 1, Callback = function(v) TrollSettings.TargetMode = v end})
-    local AuraTargetDropdown = Tabs.Troll:AddDropdown("AuraTarget", {Title = "Alvo Específico", Values = {}, Callback = function(Name) SelectedAuraTarget = Name end})
-    Tabs.Troll:AddSlider("AuraRangeSld", {Title = "Alcance (Studs)", Default = 25, Min = 5, Max = 150, Rounding = 0, Callback = function(v) TrollSettings.AuraRange = v end})
+    Tabs.Troll:AddSlider("AuraRange", {Title = "Alcance da Aura", Default = 25, Min = 5, Max = 100, Rounding = 0, Callback = function(v) TrollSettings.AuraRange = v end})
     Tabs.Troll:AddToggle("AutoEquipTool", {Title = "Auto Equipar Arma", Default = true, Callback = function(v) TrollSettings.AutoEquipTool = v end})
     Tabs.Troll:AddToggle("TPToTarget", {Title = "Teletransportar pro Alvo", Default = false, Callback = function(v) TrollSettings.TPToTarget = v end})
 
-    -- [ ABA PROTECTION ] --
+    -- 6. Protection
+    Tabs.Protection:AddSection("Anti-Detection")
     Tabs.Protection:AddToggle("Noclip", {Title = "Noclip", Default = false, Callback = function(v) _G.Noclip = v end})
-    Tabs.Protection:AddToggle("AntiSit", {Title = "Anti sit", Default = false, Callback = function(v) _G.AntiSit = v end})
-    Tabs.Protection:AddToggle("AntiVoid", {Title = "Anti void", Default = false, Callback = function(v) _G.AntiVoid = v end})
-    Tabs.Protection:AddToggle("AntiFling", {Title = "Anti fling", Default = false, Callback = function(v) _G.AFling = v end})
-    Tabs.Protection:AddButton({Title = "Anti lag", Callback = function()
-        for _, v in pairs(game:GetDescendants()) do if v:IsA("Part") or v:IsA("MeshPart") then v.Material = Enum.Material.SmoothPlastic elseif v:IsA("Decal") or v:IsA("Texture") then v:Destroy() end end
+    Tabs.Protection:AddToggle("AntiAFK", {Title = "Anti-AFK", Default = false, Callback = function(v) _G.AntiAFK = v end})
+    Tabs.Protection:AddButton({Title = "Clean Cache (Anti-Lag)", Callback = function()
+        for _, v in pairs(game:GetDescendants()) do 
+            if v:IsA("Part") or v:IsA("MeshPart") then v.Material = Enum.Material.SmoothPlastic 
+            elseif v:IsA("Decal") or v:IsA("Texture") then v:Destroy() end 
+        end
     end})
 
-    -- [ ABA SERVER ] --
+    -- 7. Server Info
     local fpsL = Tabs.Server:AddParagraph({Title = "FPS: 0", Content = ""})
     local pingL = Tabs.Server:AddParagraph({Title = "Ping: 0ms", Content = ""})
     task.spawn(function()
@@ -350,7 +347,74 @@ local function IniciarHub()
     Tabs.Server:AddButton({Title = "Anti-AFK", Callback = function() Player.Idled:Connect(function() game:GetService("VirtualUser"):CaptureController() game:GetService("VirtualUser"):ClickButton2(Vector2.new()) end) end})
     Tabs.Server:AddButton({Title = "Rejoin", Callback = function() game:GetService("TeleportService"):Teleport(game.PlaceId, Player) end})
 
-    -- [ SISTEMA DE LOOP E ATIVAÇÃO FINAL ] --
+    -- Loops em Segundo Plano (ESP, Dropdowns e Noclip)
+    local ESPCache = {}
+    RunService.RenderStepped:Connect(function()
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= Player then
+                if not ESPCache[p] then
+                    ESPCache[p] = {
+                        Box = Drawing.new("Square"),
+                        Name = Drawing.new("Text"),
+                        HealthBar = Drawing.new("Line"),
+                        HealthBarBg = Drawing.new("Line"),
+                        Tracer = Drawing.new("Line")
+                    }
+                    ESPCache[p].Box.Filled = false
+                    ESPCache[p].Name.Size, ESPCache[p].Name.Center, ESPCache[p].Name.Outline = 14, true, true
+                end
+                
+                local cache, char = ESPCache[p], p.Character
+                local root, hum = char and char:FindFirstChild("HumanoidRootPart"), char and char:FindFirstChildOfClass("Humanoid")
+                
+                local function HideAll()
+                    for _, obj in pairs(cache) do obj.Visible = false end
+                end
+
+                if ESP_Settings.Enabled and char and root and hum and hum.Health > 0 then
+                    local vector, onScreen = Camera:WorldToViewportPoint(root.Position)
+                    if onScreen then
+                        local dist = (Camera.CFrame.Position - root.Position).Magnitude
+                        local w, h = math.clamp(2000 / dist, 15, 300), math.clamp(3500 / dist, 25, 500)
+                        local x, y = vector.X - w / 2, vector.Y - h / 2
+
+                        cache.Box.Visible = ESP_Settings.Boxes
+                        if ESP_Settings.Boxes then
+                            cache.Box.Size = Vector2.new(w, h)
+                            cache.Box.Position = Vector2.new(x, y)
+                            cache.Box.Color = ESP_Settings.MainColor
+                        end
+
+                        local head = char:FindFirstChild("Head")
+                        cache.Name.Visible = ESP_Settings.Names and (head ~= nil)
+                        if ESP_Settings.Names and head then
+                            local headVec = Camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                            cache.Name.Text = p.Name .. " [" .. math.floor(dist) .. "m]"
+                            cache.Name.Position = Vector2.new(headVec.X, headVec.Y - 20)
+                            cache.Name.Color = ESP_Settings.MainColor
+                        end
+
+                        cache.HealthBar.Visible = ESP_Settings.Health
+                        cache.HealthBarBg.Visible = ESP_Settings.Health
+                        if ESP_Settings.Health then
+                            local hpPct = math.clamp(hum.Health / hum.MaxHealth, 0, 1)
+                            cache.HealthBarBg.From, cache.HealthBarBg.To = Vector2.new(x - 6, y + h), Vector2.new(x - 6, y)
+                            cache.HealthBar.From, cache.HealthBar.To = Vector2.new(x - 6, y + h), Vector2.new(x - 6, y + (h - (h * hpPct)))
+                            cache.HealthBar.Color = Color3.fromRGB(0, 255, 0):Lerp(Color3.fromRGB(255, 0, 0), 1 - hpPct)
+                        end
+
+                        cache.Tracer.Visible = ESP_Settings.Tracers
+                        if ESP_Settings.Tracers then
+                            cache.Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                            cache.Tracer.To = Vector2.new(vector.X, vector.Y + (h / 2))
+                            cache.Tracer.Color = ESP_Settings.MainColor
+                        end
+                    else HideAll() end
+                else HideAll() end
+            end
+        end
+    end)
+
     task.spawn(function()
         while true do
             task.wait(0.1)
@@ -359,6 +423,7 @@ local function IniciarHub()
                 for _, p in pairs(Players:GetPlayers()) do if p ~= Player then table.insert(pList, p.Name) end end
                 SpecDropdown:SetValues(pList)
                 AuraTargetDropdown:SetValues(pList)
+                TPPlayerDropdown:SetValues(pList)
                 
                 if _G.Noclip and Player.Character then
                     for _, p in pairs(Player.Character:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide = false end end
@@ -368,10 +433,9 @@ local function IniciarHub()
     end)
 
     Window:SelectTab(3)
-    print("🚀 GANIN HUB: Ativado!")
+    print("🚀 GANIN HUB: Ativado com sucesso!")
 end
 
--- ================= INICIO DA CENA =================
 StartCinematicIntro(function()
     IniciarHub()
 end)
